@@ -2,12 +2,12 @@
 #include <string>
 using namespace std;
 
-int record_total = 0, record_size = 0;
+int record_total, record_size = 0;
 char null;
-string student_name [100] = {};
-string student_id [100] = {};
-string student_course [100] = {};
-string student_mobile [100] = {};
+string student_name [10] = {};
+string student_id [10] = {};
+string student_course [10] = {};
+string student_mobile [10] = {};
 
 void sms_intro()
 {
@@ -37,7 +37,7 @@ void sms_login()
 			break;
 		}
 		else {
-			cout << endl << "Invalid Username and/or Password" << endl << endl;
+			cout << endl << "--     ! Invalid Username and Password !     --" << endl << endl;
 			continue;
 		}
 	}
@@ -60,26 +60,25 @@ void sms_input_record()
 	getline(cin, student_mobile[record_total]);
 	
 	record_total += 1;
+
 	cout << endl << "-------     ! Student Record Added !     ------" << endl << endl;
 }
 
 void sms_view_record()
 {
-	for (int i = 0 ; i < record_size ; i++) {
-		cout << "- Record Number [" << i + 1 << "]" << endl << endl;
-		cout << "- Student Name: " << student_name[i] << endl;
-		cout << "- Student ID: " << student_id[i] << endl;
-		cout << "- Student Course: " << student_course[i] << endl;
-		cout << "- Student Mobile Number: " << student_mobile[i] << endl << endl;	
-	}
-	cout << "-----     * Press enter to continue *     -----" << endl;
-	cin.ignore();
-	while (true) {
-		null = cin.get();
-		
-		if (null == '\n') {
-			break;
+	cout << "-----------------------------------------------" << endl << endl;
+	if (record_size != 0) {
+		for (int i = 0 ; i < record_size ; i++) {
+			cout << "- Record Number [" << i + 1 << "]" << endl << endl;
+			cout << "- Student Name: " << student_name[i] << endl;
+			cout << "- Student ID: " << student_id[i] << endl;
+			cout << "- Student Course: " << student_course[i] << endl;
+			cout << "- Student Mobile Number: " << student_mobile[i] << endl << endl;	
 		}
+		cout << "-----------------------------------------------" << endl << endl;
+	}
+	else {
+		cout << endl << "----------    ! No Record Found !    ----------" << endl << endl;
 	}
 }
 
@@ -97,7 +96,6 @@ void sms_find_record()
 			cout << endl << "--------    ! Student Record Found !    -------" << endl << endl;
 			break;
 		}
-	
 	if (index != -1) {
 		cout << "- Record Number [" << index + 1 << "]" << endl << endl;
 		cout << "- Student Name: " << student_name[index] << endl;
@@ -108,47 +106,120 @@ void sms_find_record()
 	else { 
 		cout << endl << "-----     ! Student Record Not Found !     ----" << endl << endl;
 	}
-	
-	cout << "-----     * Press enter to continue *     -----" << endl;
-	cin.ignore();
-	while (true) {
-		null = cin.get();
-		
-		if (null == '\n') {
-			break;
-		}
-	}
 }
 
 void sms_delete_record()
 {
 	int record_number;
 	
-	for (int i = 0 ; i < record_size ; i++) {
-		cout << "- Record Number [" << i + 1 << "]" << endl << endl;
-		cout << "- Student Name: " << student_name[i] << endl;
-		cout << "- Student ID: " << student_id[i] << endl;
-		cout << "- Student Course: " << student_course[i] << endl;
-		cout << "- Student Mobile Number: " << student_mobile[i] << endl << endl;	
-	}
+	sms_view_record();
 	
 	cout << "> Choose Record Number to Delete: ";
 	cin >> record_number;
+	
+	
+	if (record_number < 0 || record_number >= record_size) {
+        cout << "----------     ! Invalid index !     ----------" << endl;
+    }
+    
+    for (int i = (record_number - 1); i < record_size - 1; ++i) {
+        student_name[i] = student_name[i + 1];
+        student_id[i] = student_id[i + 1];
+        student_course[i] = student_course[i + 1];
+        student_mobile[i] = student_mobile[i + 1];
+    
+	}
+	
+	record_size--;
+	record_total--;
+
+	cout << endl << "------     ! Student Record Deleted !     -----" << endl << endl;
 }
 
 void sms_update_record()
 {
+	int record_number, record_part;
 	
-}
+	sms_view_record();
+	
+	while (true) {
+		cout << "> Choose Record Number to Update: ";
+		cin >> record_number;
+		
+		if ((record_number <= record_size) && (record_number > 0)) {
+			break;
+		}
+		else if (record_size == 0) {
+			cout << endl << "----------    ! No Record Found !    ----------" << endl << endl;
+		}
+		else {
+			cout << endl << "-------    ! Invalid Record Number !    -------" << endl << endl;
+		}
+	}
+	
+	while (record_part != 5) {
+		cout << endl << "-----------------------------------------------" << endl 
+		 << "- Name [1] | ID [2] | Course [3] | Number [4] -" << endl
+		 << "----------------- | Done [5] | ----------------" << endl << endl
+		 << "> Choose Which Part to Update: ";
+		cin >> record_part;
+		
+		if (record_part == 5) {
+			cout << endl;
+			break;
+		}
+		cout << endl;
 
-void sms_store_record()
-{
-	
+		switch (record_part) {
+		case 1:
+			cout << "> Enter New Student Name: ";
+			cin.ignore();
+			getline(cin, student_name[record_number - 1]);
+			cout << endl << "-------     ! Student Name Updated !     ------" << endl;
+			break;
+		case 2:
+			cout << "> Enter New Student ID: ";
+			cin.ignore();
+			getline(cin, student_id[record_number - 1]);
+			cout << endl << "--------     ! Student ID Updated !     -------" << endl;
+			break;
+		case 3:
+			cout << "> Enter New Student Course: ";
+			cin.ignore();
+			getline(cin, student_course[record_number - 1]);
+			cout << endl << "------     ! Student Course Updated !     -----" << endl;
+			break;
+		case 4:
+			cout << "> Enter New Student Mobile Number: ";
+			cin.ignore();
+			getline(cin, student_mobile[record_number - 1]);
+			cout << endl << "--     ! Student Mobile Number Updated !     --" << endl;
+			break;
+		case 5:
+			continue;
+		default:
+			cout << "-------    ! Invalid Part Number !     --------" << endl;
+			break;
+		}		
+	}
 }
 
 void sms_exit()
 {
-	
+	cout << "---------     ! Exiting Program !     ---------" << endl;
+}
+
+void sms_prompt()
+{
+	cout << "-----     * Press enter to continue *     -----" << endl;
+		cin.ignore();
+		while (true) {
+			null = cin.get();
+			
+			if (null == '\n') {
+				break;
+			}
+		}	
 }
 
 void sms_menu()
@@ -156,7 +227,7 @@ void sms_menu()
 	int option;
 	
 	while (option != 6) {
-		cout << endl << "--------------     Main Menu     --------------" << endl
+		cout << "--------------     Main Menu     --------------" << endl
 			 << "--                                           --" << endl
 		 	 << "--       1. Input Student Record             --" << endl
 		 	 << "--       2. View All Student Record          --" << endl
@@ -173,38 +244,37 @@ void sms_menu()
 		switch (option) {
 			case 1:
 				sms_input_record();
-				sms_store_record();
 				break;
 			case 2:
 				sms_view_record();
+				sms_prompt();
 				break;
 			case 3:
 				sms_find_record();
+				sms_prompt();
 				break;
 			case 4:
 				sms_delete_record();
 				break;
 			case 5:
 				sms_update_record();
-				sms_store_record();
 				break;
 			case 6:
 				sms_exit();
 				break;
 			default:
-				cout << "----     ! Invalid option, try again !     ----" << endl;
+				cout << "----------     ! Invalid Option !     ---------" << endl;
 				continue;
 		}
-		
-		
 	}
-	
-	
 }
 
 int main()
 {
+
 	sms_intro();
 	sms_login();
 	sms_menu();
+	
+	return 0;
 }
